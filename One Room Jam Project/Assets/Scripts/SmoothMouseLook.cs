@@ -21,6 +21,11 @@ public class SmoothMouseLook : MonoBehaviour
 
     Quaternion originalRotation;
 
+    public int zoomFOV = 40;
+    private float initialFOV;
+
+    private bool hasFocus = false;
+
 
     void Start()
     {
@@ -29,17 +34,21 @@ public class SmoothMouseLook : MonoBehaviour
             rb.freezeRotation = true;
         originalRotation = transform.localRotation;
 
+        initialFOV = Camera.main.fieldOfView;
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
 
     void Update()
     {
+        if (!hasFocus || Cursor.lockState != CursorLockMode.Locked) return;
+
         if (axes == RotationAxes.MouseXAndY)
         {
 
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
-            rotationX += Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
+            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
+            rotationX += Input.GetAxis("Mouse X") * sensitivityX;
 
             rotationY = ClampAngle(rotationY, minimumY, maximumY);
             rotationX = ClampAngle(rotationX, minimumX, maximumX);
@@ -49,52 +58,26 @@ public class SmoothMouseLook : MonoBehaviour
 
             transform.localRotation = originalRotation * xQuaternion * yQuaternion;
         }
-        //else if (axes == RotationAxes.MouseX)
-        //{
-        //    rotAverageX = 0f;
+        else if (axes == RotationAxes.MouseX)
+        {
 
-        //    rotationX += Input.GetAxis("Mouse X") * sensitivityX;
+            rotationX += Input.GetAxis("Mouse X") * sensitivityX;
 
-        //    rotArrayX.Add(rotationX);
+            rotationX = ClampAngle(rotationX, minimumX, maximumX);
 
-        //    if (rotArrayX.Count >= frameCounter)
-        //    {
-        //        rotArrayX.RemoveAt(0);
-        //    }
-        //    for (int i = 0; i < rotArrayX.Count; i++)
-        //    {
-        //        rotAverageX += rotArrayX[i];
-        //    }
-        //    rotAverageX /= rotArrayX.Count;
+            Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+            transform.localRotation = originalRotation * xQuaternion;
+        }
+        else
+        {
+            
+            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
 
-        //    rotAverageX = ClampAngle(rotAverageX, minimumX, maximumX);
+            rotationY = ClampAngle(rotationY, minimumY, maximumY);
 
-        //    Quaternion xQuaternion = Quaternion.AngleAxis(rotAverageX, Vector3.up);
-        //    transform.localRotation = originalRotation * xQuaternion;
-        //}
-        //else
-        //{
-        //    rotAverageY = 0f;
-
-        //    rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-
-        //    rotArrayY.Add(rotationY);
-
-        //    if (rotArrayY.Count >= frameCounter)
-        //    {
-        //        rotArrayY.RemoveAt(0);
-        //    }
-        //    for (int j = 0; j < rotArrayY.Count; j++)
-        //    {
-        //        rotAverageY += rotArrayY[j];
-        //    }
-        //    rotAverageY /= rotArrayY.Count;
-
-        //    rotAverageY = ClampAngle(rotAverageY, minimumY, maximumY);
-
-        //    Quaternion yQuaternion = Quaternion.AngleAxis(rotAverageY, Vector3.left);
-        //    transform.localRotation = originalRotation * yQuaternion;
-        //}
+            Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
+            transform.localRotation = originalRotation * yQuaternion;
+        }
 
 
 
@@ -103,6 +86,11 @@ public class SmoothMouseLook : MonoBehaviour
             //Cursor.lockState = CursorLockMode.None;
             //Cursor.visible = true;
         }
+
+        float targetZoomValue = initialFOV;
+        if (Input.GetMouseButton(1)) targetZoomValue = zoomFOV;
+        Camera.main.fieldOfView = Mathf.MoveTowards(Camera.main.fieldOfView, targetZoomValue, 50 * Time.deltaTime);
+
     }
 
     public static float ClampAngle(float angle, float min, float max)
@@ -120,5 +108,11 @@ public class SmoothMouseLook : MonoBehaviour
             }
         }
         return Mathf.Clamp(angle, min, max);
+    }
+
+
+    private void OnApplicationFocus(bool focus)
+    {
+        hasFocus = focus;
     }
 }

@@ -1634,7 +1634,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-144752
+  m_Name: pb_Mesh14292
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1961,6 +1961,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1985,7 +1986,7 @@ Camera:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2015,7 +2016,7 @@ Camera:
   m_HDR: 1
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
+  m_ForceIntoRT: 1
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -2046,12 +2047,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   axes: 0
-  sensitivityX: 100
-  sensitivityY: 100
+  sensitivityX: 1
+  sensitivityY: 1
   minimumX: -360
   maximumX: 360
   minimumY: -60
   maximumY: 60
+  zoomFOV: 30
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2069,8 +2071,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   stopNaNPropagation: 1
-  finalBlitToCameraTarget: 1
-  antialiasingMode: 1
+  finalBlitToCameraTarget: 0
+  antialiasingMode: 0
   temporalAntialiasing:
     jitterSpread: 0.75
     sharpness: 0.25
@@ -2114,6 +2116,45 @@ MonoBehaviour:
   - assemblyQualifiedName: PostProcessOutline, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   m_AfterStackBundles: []
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b416fbce5a38cc47a3a1e709f95f5e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cfuStatus: PSXEffects v1.11.0 - up to date.
+  sections: 01010100
+  customRes: {x: 640, y: 360}
+  resolutionFactor: 3
+  limitFramerate: -1
+  affineMapping: 0
+  polygonalDrawDistance: 0
+  vertexInaccuracy: 75
+  polygonInaccuracy: 2
+  colorDepth: 6
+  scanlines: 0
+  scanlineIntensity: 5
+  ditherTexture: {fileID: 2800000, guid: 818b09ef5da502e40a52c29ab3d1221d, type: 3}
+  dithering: 1
+  ditherThreshold: 9.84
+  ditherIntensity: 20
+  maxDarkness: 20
+  subtractFade: 5
+  favorRed: 0
+  worldSpaceSnapping: 0
+  postProcessing: 1
+  verticalScanlines: 1
+  shadowIntensity: 0.5
+  downscale: 0
+  snapCamera: 0
+  camInaccuracy: 0.05
+  camSnapping: 0
 --- !u!1 &1435129210
 GameObject:
   m_ObjectHideFlags: 0
@@ -2201,7 +2242,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-110312
+  m_Name: pb_Mesh14304
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
