@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Tileset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <tilesetMappedPoints />
+  <editorMappedPoints />
+  <animationLength>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+    <int>0</int>
+  </animationLength>
+  <tilesetName>CloudyTemple</tilesetName>
+  <tileWidth>16</tileWidth>
+  <tileHeight>16</tileHeight>
+  <tileOutline>1</tileOutline>
+  <pageWidth>108</pageWidth>
+  <pageHeight>108</pageHeight>
+  <editorTilesetWidth>96</editorTilesetWidth>
+  <editorTilesetHeight>96</editorTilesetHeight>
+  <tilePadding>0</tilePadding>
+  <textureAssets>
+    <string>Assets/Resources/Tilesets/tstCloudyTemple.png</string>
+  </textureAssets>
+  <animationAssets />
+</Tileset>

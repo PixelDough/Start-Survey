@@ -23,6 +23,7 @@ public class SmoothMouseLook : MonoBehaviour
 
     public int zoomFOV = 40;
     private float initialFOV;
+    private bool isZoomedIn = false;
 
     private bool hasFocus = false;
 
@@ -37,6 +38,9 @@ public class SmoothMouseLook : MonoBehaviour
         initialFOV = Camera.main.fieldOfView;
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        //QualitySettings.vSyncCount = 1;
     }
 
 
@@ -44,11 +48,14 @@ public class SmoothMouseLook : MonoBehaviour
     {
         if (!hasFocus || Cursor.lockState != CursorLockMode.Locked) return;
 
+        float zoomSpeedMultiplier = 1f;
+        if (isZoomedIn) zoomSpeedMultiplier = .5f;
+
         if (axes == RotationAxes.MouseXAndY)
         {
 
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-            rotationX += Input.GetAxis("Mouse X") * sensitivityX;
+            rotationY += Input.GetAxis("Mouse Y") * sensitivityY * zoomSpeedMultiplier;
+            rotationX += Input.GetAxis("Mouse X") * sensitivityX * zoomSpeedMultiplier;
 
             rotationY = ClampAngle(rotationY, minimumY, maximumY);
             rotationX = ClampAngle(rotationX, minimumX, maximumX);
@@ -61,7 +68,7 @@ public class SmoothMouseLook : MonoBehaviour
         else if (axes == RotationAxes.MouseX)
         {
 
-            rotationX += Input.GetAxis("Mouse X") * sensitivityX;
+            rotationX += Input.GetAxis("Mouse X") * sensitivityX * zoomSpeedMultiplier;
 
             rotationX = ClampAngle(rotationX, minimumX, maximumX);
 
@@ -71,7 +78,7 @@ public class SmoothMouseLook : MonoBehaviour
         else
         {
             
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
+            rotationY += Input.GetAxis("Mouse Y") * sensitivityY * zoomSpeedMultiplier;
 
             rotationY = ClampAngle(rotationY, minimumY, maximumY);
 
@@ -79,16 +86,10 @@ public class SmoothMouseLook : MonoBehaviour
             transform.localRotation = originalRotation * yQuaternion;
         }
 
-
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            //Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
-        }
+        isZoomedIn = (Input.GetMouseButton(1));
 
         float targetZoomValue = initialFOV;
-        if (Input.GetMouseButton(1)) targetZoomValue = zoomFOV;
+        if (isZoomedIn) targetZoomValue = zoomFOV;
         Camera.main.fieldOfView = Mathf.MoveTowards(Camera.main.fieldOfView, targetZoomValue, 50 * Time.deltaTime);
 
     }

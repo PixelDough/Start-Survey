@@ -1,0 +1,13 @@
+CSTP=True
+CMTP=False
+CATP=False
+CTOE=True
+Help=True
+RNOT=True
+SnapUV=True
+SOSV=False
+UseUVs=True
+VMode=1
+PMode=0
+PCol=0.9294118,0.8705883,0.7294118,1
+HCol0=0.9294118,0.8705883,0.7294118,1

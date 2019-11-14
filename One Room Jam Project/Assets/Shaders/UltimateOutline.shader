@@ -1,143 +1,166 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 //This version of the shader does not support shadows, but it does support transparent outlines
 
 Shader "Outlined/UltimateOutline"
 {
-	Properties
-	{
-		_Color("Main Color", Color) = (0.5,0.5,0.5,1)
-		_MainTex("Texture", 2D) = "white" {}
-
-		_FirstOutlineColor("Outline color", Color) = (1,0,0,0.5)
-		_FirstOutlineWidth("Outlines width", Range(0.0, 2.0)) = 0.15
-
-		_SecondOutlineColor("Outline color", Color) = (0,0,1,1)
-		_SecondOutlineWidth("Outlines width", Range(0.0, 2.0)) = 0.025
-
-		_Angle("Switch shader on angle", Range(0.0, 180.0)) = 89
-	}
-
-	CGINCLUDE
-	#include "UnityCG.cginc"
-
-	struct appdata {
-		float4 vertex : POSITION;
-		float4 normal : NORMAL;
-	};
-
-	uniform float4 _FirstOutlineColor;
-	uniform float _FirstOutlineWidth;
-
-	uniform float4 _SecondOutlineColor;
-	uniform float _SecondOutlineWidth;
-
-	uniform sampler2D _MainTex;
-	uniform float4 _Color;
-	uniform float _Angle;
-
-	ENDCG
-
-	SubShader{
-		//First outline
-		Pass{
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-			Blend SrcAlpha OneMinusSrcAlpha
-			ZWrite Off
-			Cull Back
-			CGPROGRAM
-
-			struct v2f {
-				float4 pos : SV_POSITION;
-			};
-
-			#pragma vertex vert
-			#pragma fragment frag
-
-			v2f vert(appdata v) {
-				appdata original = v;
-
-				float3 scaleDir = normalize(v.vertex.xyz - float4(0,0,0,1));
-				//This shader consists of 2 ways of generating outline that are dynamically switched based on demiliter angle
-				//If vertex normal is pointed away from object origin then custom outline generation is used (based on scaling along the origin-vertex vector)
-				//Otherwise the old-school normal vector scaling is used
-				//This way prevents weird artifacts from being created when using either of the methods
-				if (degrees(acos(dot(scaleDir.xyz, v.normal.xyz))) > _Angle) {
-					v.vertex.xyz += normalize(v.normal.xyz) * _FirstOutlineWidth;
-				}else {
-					v.vertex.xyz += scaleDir * _FirstOutlineWidth;
-				}
-
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				return o;
-			}
-
-			half4 frag(v2f i) : COLOR{
-				return _FirstOutlineColor;
-			}
-
-			ENDCG
-		}
-		
-
-		//Second outline
-		Pass{
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-			Blend SrcAlpha OneMinusSrcAlpha
-			ZWrite Off
-			Cull Back
-			CGPROGRAM
-
-			struct v2f {
-				float4 pos : SV_POSITION;
-			};
-
-			#pragma vertex vert
-			#pragma fragment frag
-
-			v2f vert(appdata v) {
-				appdata original = v;
-
-				float3 scaleDir = normalize(v.vertex.xyz - float4(0,0,0,1));
-				//This shader consists of 2 ways of generating outline that are dynamically switched based on demiliter angle
-				//If vertex normal is pointed away from object origin then custom outline generation is used (based on scaling along the origin-vertex vector)
-				//Otherwise the old-school normal vector scaling is used
-				//This way prevents weird artifacts from being created when using either of the methods
-				if (degrees(acos(dot(scaleDir.xyz, v.normal.xyz))) > _Angle) {
-					v.vertex.xyz += normalize(v.normal.xyz) * _SecondOutlineWidth;
-				}
-			else {
-				v.vertex.xyz += scaleDir * _SecondOutlineWidth;
-			}
-
-			v2f o;
-			o.pos = UnityObjectToClipPos(v.vertex);
-			return o;
-			}
-
-			half4 frag(v2f i) : COLOR{
-				return _SecondOutlineColor;
-			}
-
-			ENDCG
-		}
-
-		//Surface shader
-		Tags{ "Queue" = "Transparent" }
-
-		CGPROGRAM
-		#pragma surface surf Lambert noshadow
-
-		struct Input {
-			float2 uv_MainTex;
-			float4 color : COLOR;
-		};
-
-		void surf(Input IN, inout SurfaceOutput  o) {
-			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb;
-			o.Alpha = c.a;
-		}
-		ENDCG
-	}
-	Fallback "Diffuse"
+	Properties 
+     {
+         _Color("Color", Color) = (1,0,0,1)
+         _Thickness("Thickness", float) = 4
+     }
+     SubShader 
+     {
+     
+         Tags { "Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Transparent" }
+         Blend SrcAlpha OneMinusSrcAlpha
+         Cull Back
+         ZTest always
+         Pass
+         {
+             Stencil {
+                 Ref 1
+                 Comp always
+                 Pass replace
+             }
+             CGPROGRAM
+             #pragma vertex vert
+             #pragma fragment frag
+             #pragma multi_compile_fog
+             
+             #include "UnityCG.cginc"
+             
+             struct v2g 
+             {
+                 float4  pos : SV_POSITION;
+                 float2  uv : TEXCOORD0;
+                 float3 viewT : TANGENT;
+                 float3 normals : NORMAL;
+             };
+             
+             struct g2f 
+             {
+                 float4  pos : SV_POSITION;
+                 float2  uv : TEXCOORD0;
+                 float3  viewT : TANGENT;
+                 float3  normals : NORMAL;
+             };
+ 
+             v2g vert(appdata_base v)
+             {
+                 v2g OUT;
+                 OUT.pos = UnityObjectToClipPos(v.vertex);
+                 OUT.uv = v.texcoord; 
+                  OUT.normals = v.normal;
+                 OUT.viewT = ObjSpaceViewDir(v.vertex);
+                 
+                 return OUT;
+             }
+             
+             half4 frag(g2f IN) : COLOR
+             {
+                 //this renders nothing, if you want the base mesh and color
+                 //fill this in with a standard fragment shader calculation
+                 return 0;
+             }
+             ENDCG
+         }
+         Pass 
+         {
+             Stencil {
+                 Ref 0
+                 Comp equal
+             }
+             CGPROGRAM
+             #include "UnityCG.cginc"
+             #pragma target 4.0
+             #pragma vertex vert
+             #pragma geometry geom
+             #pragma fragment frag
+             
+             
+             half4 _Color;
+             float _Thickness;
+         
+             struct v2g 
+             {
+                 float4 pos : SV_POSITION;
+                 float2 uv : TEXCOORD0;
+                 float3 viewT : TANGENT;
+                 float3 normals : NORMAL;
+             };
+             
+             struct g2f 
+             {
+                 float4 pos : SV_POSITION;
+                 float2 uv : TEXCOORD0;
+                 float3 viewT : TANGENT;
+                 float3 normals : NORMAL;
+             };
+ 
+             v2g vert(appdata_base v)
+             {
+                 v2g OUT;
+                 OUT.pos = UnityObjectToClipPos(v.vertex);
+                 
+                 OUT.uv = v.texcoord;
+                  OUT.normals = v.normal;
+                 OUT.viewT = ObjSpaceViewDir(v.vertex);
+                 
+                 return OUT;
+             }
+             
+             void geom2(v2g start, v2g end, inout TriangleStream<g2f> triStream)
+             {
+                 float thisWidth = _Thickness/100;
+                 float4 parallel = end.pos-start.pos;
+                 normalize(parallel);
+                 parallel *= thisWidth;
+                 
+                 float4 perpendicular = float4(parallel.y,-parallel.x, 0, 0);
+                 perpendicular = normalize(perpendicular) * thisWidth;
+                 float4 v1 = start.pos-parallel;
+                 float4 v2 = end.pos+parallel;
+                 g2f OUT;
+                 OUT.pos = v1-perpendicular;
+                 OUT.uv = start.uv;
+                 OUT.viewT = start.viewT;
+                 OUT.normals = start.normals;
+                 triStream.Append(OUT);
+                 
+                 OUT.pos = v1+perpendicular;
+                 triStream.Append(OUT);
+                 
+                 OUT.pos = v2-perpendicular;
+                 OUT.uv = end.uv;
+                 OUT.viewT = end.viewT;
+                 OUT.normals = end.normals;
+                 triStream.Append(OUT);
+                 
+                 OUT.pos = v2+perpendicular;
+                 OUT.uv = end.uv;
+                 OUT.viewT = end.viewT;
+                 OUT.normals = end.normals;
+                 triStream.Append(OUT);
+             }
+             
+             [maxvertexcount(12)]
+             void geom(triangle v2g IN[3], inout TriangleStream<g2f> triStream)
+             {
+                 geom2(IN[0],IN[1],triStream);
+                 geom2(IN[1],IN[2],triStream);
+                 geom2(IN[2],IN[0],triStream);
+             }
+             
+             half4 frag(g2f IN) : COLOR
+             {
+                 _Color.a = 1;
+                 return _Color;
+             }
+             
+             ENDCG
+ 
+         }
+     }
+     FallBack "Diffuse"
 }
