@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &8862780277650366684
 Transform:
@@ -142,7 +142,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &3990723312939225975
 Transform:
@@ -281,8 +281,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3c23af53df26041a934dd45d9bbd25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 2496192078148289850}
+  image: {fileID: 4543865627144569713}
   topOpener: {fileID: 8862780277650366684}
+  isOpen: 0
 --- !u!114 &7976615683066270748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,8 +296,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fb85193ccaa0774995ce427374e9448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowMaterial: {fileID: 2100000, guid: d9ad710260813384398ce21889c79f9f, type: 2}
+  canInteract: 1
+  soundEffect: {fileID: 0}
   name: Folder
+  lookPoint: {fileID: 0}
   interactionType: 3
 --- !u!1001 &8938519314010562208
 PrefabInstance:
@@ -313,7 +316,7 @@ PrefabInstance:
     - target: {fileID: 7815497536318064311, guid: 540186f5bfc6eeb42949d03880a3012a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.27
+      value: 0.2619
       objectReference: {fileID: 0}
     - target: {fileID: 7815497536318064311, guid: 540186f5bfc6eeb42949d03880a3012a,
         type: 3}
@@ -365,21 +368,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7815497536318064311, guid: 540186f5bfc6eeb42949d03880a3012a,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.45071504
-      objectReference: {fileID: 0}
-    - target: {fileID: 7815497536318064311, guid: 540186f5bfc6eeb42949d03880a3012a,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7815497536318064311, guid: 540186f5bfc6eeb42949d03880a3012a,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.45071504
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 540186f5bfc6eeb42949d03880a3012a, type: 3}
 --- !u!4 &1188324047792674839 stripped
@@ -388,15 +376,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 8938519314010562208}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2496192078148289850 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6822881473502976922, guid: 540186f5bfc6eeb42949d03880a3012a,
+--- !u!23 &4543865627144569713 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4829251072518135249, guid: 540186f5bfc6eeb42949d03880a3012a,
     type: 3}
   m_PrefabInstance: {fileID: 8938519314010562208}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

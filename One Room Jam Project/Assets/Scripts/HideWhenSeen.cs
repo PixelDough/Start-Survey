@@ -12,6 +12,8 @@ public class HideWhenSeen : MonoBehaviour
     private bool isSeen = false;
     private AudioSource audioSource;
 
+    [HideInInspector] public bool hasBeenSeen = false;
+
     private void Start()
     {
         renderer = GetComponent<Renderer>();
@@ -23,7 +25,7 @@ public class HideWhenSeen : MonoBehaviour
     private void Update()
     {
         Vector3 screenPoint = Camera.main.WorldToViewportPoint(targetSeenPoint.position);
-        bool visible = screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
+        bool visible = screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
 
         if (visible && !isSeen)
         {
@@ -43,6 +45,7 @@ public class HideWhenSeen : MonoBehaviour
 
     IEnumerator StartMove()
     {
+        hasBeenSeen = true;
         yield return new WaitForSeconds(0.25f);
         isSeen = true;
         audioSource.Play();

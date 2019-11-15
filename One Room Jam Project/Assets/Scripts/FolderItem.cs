@@ -3,35 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using UnityEngine.Networking;
 
 public class FolderItem : MonoBehaviour
 {
 
-    [SerializeField] private RawImage image;
+    [SerializeField] private Renderer image;
     [SerializeField] private Transform topOpener;
 
+    [HideInInspector] public bool isOpen = false;
 
-    IEnumerator Start()
+
+    private void Start()
+    {
+        StartCoroutine(StartItemLoad());
+    }
+
+
+    IEnumerator StartItemLoad()
     {
         string name = System.Environment.UserName;
-
 
         string[] FileList = Directory.GetFiles(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop), "*.png");
         //string[] FileList = Directory.GetFiles(@"C:/Users/owner/AppData/Roaming/Microsoft/Windows/AccountPictures");
         if (FileList.Length <= 0)
             FileList = Directory.GetFiles(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures), "*.png");
-
         if (FileList.Length > 0)
         {
-            FileInfo file = new FileInfo(FileList[0]);
+            byte[] bytes = File.ReadAllBytes(FileList[Random.Range(0, FileList.Length)]);
+            Texture2D tex = new Texture2D(1,1);
+            tex.LoadImage(bytes);
+            image.material.mainTexture = tex;
+            image.material.mainTexture.filterMode = FilterMode.Point;
+            yield return null;
 
-            WWW www = new WWW(FileList[Random.Range(0, FileList.Length)]);
-            while (!www.isDone)
-                yield return null;
-            //image.sprite = Sprite.Create(www.texture, new Rect(0.0f, 0.0f, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f), 100.0f);
-            image.texture = www.texture;
-            image.texture.filterMode = FilterMode.Point;
-            //System.Environment.SpecialFolder.Windows + @"/AccountPictures";
+            //UnityWebRequest www = new UnityWebRequest(FileList[Random.Range(0, FileList.Length)]);
+            
+            //while (!www.isDone)
+            //    yield return null;
+            ////image.sprite = Sprite.Create(www.texture, new Rect(0.0f, 0.0f, www.texture.width, www.texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+            //image.texture.LoadImage(www.texture.GetRawTextureData());
+            //image.texture.filterMode = FilterMode.Point;
+            ////System.Environment.SpecialFolder.Windows + @"/AccountPictures";
         }
     }
 
@@ -39,6 +52,7 @@ public class FolderItem : MonoBehaviour
     public void Open()
     {
         StartCoroutine(OpenAnimation());
+        isOpen = true;
     }
 
 

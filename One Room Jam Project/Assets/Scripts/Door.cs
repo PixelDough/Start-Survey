@@ -27,11 +27,11 @@ public class Door : MonoBehaviour
     {
         
         Vector3 screenPoint = Camera.main.WorldToViewportPoint(transform.position);
-        bool visible = screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
+        bool visible = screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
 
         if (isOpen && visible && CheckHiddenGuyState(false))
         {
-            ToggleHiddenGuys();
+            //ToggleHiddenGuys();
             
         }
     }

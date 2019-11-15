@@ -139,7 +139,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 0
 --- !u!4 &9018478943217110437
 Transform:
@@ -232,7 +232,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &7279859158677142180
 Transform:
@@ -323,7 +323,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &7644333630352913089
 Transform:
@@ -505,7 +505,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &4921042003935733801
 Transform:
@@ -676,6 +676,9 @@ MonoBehaviour:
   buttonYes: {fileID: 8802488395773211882}
   buttonNo: {fileID: 1548671642926958833}
   startQuestion: 0
+  window: {fileID: 0}
+  otherHouse: {fileID: 0}
+  endingSong: {fileID: 8300000, guid: 5dd715f418701cd49bab16dd605f433d, type: 3}
 --- !u!1 &4758066233050175364
 GameObject:
   m_ObjectHideFlags: 0

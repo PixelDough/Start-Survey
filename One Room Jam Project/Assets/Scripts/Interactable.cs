@@ -10,15 +10,21 @@ public class Interactable : MonoBehaviour
     private Mesh mesh;
 
     private bool isHeld = false;
+    [HideInInspector] public bool canInteract = true;
     private HoldPoint holdPoint;
+
+    private float heldRotation = 0f;
 
     private Rigidbody rb;
     private Collider collider;
 
     private Transform startParent;
 
+    private bool isOpen = false;
+
     [SerializeField] AudioClip soundEffect;
     [SerializeField] string name = "NAME";
+    [SerializeField] Transform lookPoint;
 
     private string action = "Use";
 
@@ -27,7 +33,9 @@ public class Interactable : MonoBehaviour
         Pickup,
         Button,
         Trash,
-        Folder
+        Folder,
+        OpenClose,
+        Look
     }
     [SerializeField] InteractionTypes interactionType = InteractionTypes.Pickup;
 
@@ -64,27 +72,56 @@ public class Interactable : MonoBehaviour
             case InteractionTypes.Folder:
                 action = "Open";
                 break;
+            case InteractionTypes.OpenClose:
+                action = "Toggle";
+                break;
+            case InteractionTypes.Look:
+                action = "Look";
+                break;
         }
+    }
+
+
+    private void Update()
+    {
+
+        //if (isHeld && Input.GetMouseButtonDown(2))
+        //{
+
+        //    isHeld = false;
+        //    transform.SetParent(startParent);
+        //    if (rb) rb.isKinematic = false;
+        //    collider.enabled = true;
+        //    rb.velocity = Camera.main.transform.forward * 1000f * Time.deltaTime;
+        //    holdPoint.currentHeldItem = null;
+
+        //}
     }
 
 
     private void LateUpdate()
     {
-        if (!GameManager.Instance.surveyStarted) { return; }
+        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
         if (isHeld)
         {
             transform.SetParent(holdPoint.transform);
             transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, 5f * Time.deltaTime);
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, 5f * Time.deltaTime);
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(new Vector3(0, heldRotation, 0)), 5f * Time.deltaTime);
             if (rb) rb.isKinematic = true;
             collider.enabled = false;
             //DrawOutlineMesh();
+            heldRotation += Input.mouseScrollDelta.y * 2000 * Time.deltaTime;
+
+            
         }
-        else
+        else if (interactionType != InteractionTypes.Pickup)
         {
+            
             transform.SetParent(startParent);
             if (rb) rb.isKinematic = false;
             collider.enabled = true;
+
+            heldRotation = 0f;
         }
     }
 
@@ -95,27 +132,46 @@ public class Interactable : MonoBehaviour
     }
 
 
+    private void OnMouseEnter()
+    {
+        if (!this.enabled) { return; }
+        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
+        if ((holdPoint.currentHeldItem != null && interactionType == InteractionTypes.Pickup)) { return; }
+        if (!holdPoint.currentHeldItem && interactionType == InteractionTypes.Trash) { return; }
+
+        MainUI.Instance.SetInteractText(action, name);
+        MainUI.Instance.SetInteractVisible(true);
+    }
+
+
     private void OnMouseOver()
     {
-        if (!GameManager.Instance.surveyStarted) { return; }
+        if (!this.enabled) { return; }
+        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
         if ((holdPoint.currentHeldItem != null && interactionType == InteractionTypes.Pickup) ) { return; }
         if (!holdPoint.currentHeldItem && interactionType == InteractionTypes.Trash) { return; }
 
-        //DrawOutlineMesh();
         MainUI.Instance.SetInteractText(action, name);
+        MainUI.Instance.SetInteractVisible(true);
     }
 
 
     private void OnMouseExit()
     {
-        if (!GameManager.Instance.surveyStarted) { return; }
-        MainUI.Instance.SetInteractText("", "");
+        if (!this.enabled) { return; }
+        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
+        if ((holdPoint.currentHeldItem != null && interactionType == InteractionTypes.Pickup)) { return; }
+        if (!holdPoint.currentHeldItem && interactionType == InteractionTypes.Trash) { return; }
+
+        MainUI.Instance.SetInteractVisible(false);
     }
 
 
     private void OnMouseDown()
     {
-        if (!GameManager.Instance.surveyStarted) { return; }
+        if (!this.enabled) { return; }
+        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
+        
         switch (interactionType)
         {
             case InteractionTypes.Pickup:
@@ -135,20 +191,48 @@ public class Interactable : MonoBehaviour
                 }
                 break;
             case InteractionTypes.Button:
-                try { gameObject.BroadcastMessage("ListenButtonPush"); } catch { }
-                try { gameObject.SendMessageUpwards("ListenButtonPush"); } catch { }
+                try { gameObject.BroadcastMessage("ListenButtonPush"); } catch(Exception e) { }
+                try { gameObject.SendMessageUpwards("ListenButtonPush"); } catch(Exception e) { }
                 break;
             case InteractionTypes.Folder:
                 gameObject.BroadcastMessage("Open");
                 Destroy(gameObject.GetComponent<Interactable>());
                 break;
+            case InteractionTypes.OpenClose:
+                if (isOpen)
+                    GetComponent<Animator>().CrossFade("Close", 0.5f, -1, 0);
+                else
+                    GetComponent<Animator>().CrossFade("Open", 0.5f, -1, 0);
+                isOpen = !isOpen;
+                break;
+            case InteractionTypes.Look:
+                this.enabled = false;
+                StartCoroutine(SendPlayerToPoint());
+
+                break;
         }
+        MainUI.Instance.SetInteractVisible(false);
+
     }
 
 
     void PlaySoundEffect()
     {
         AudioSource.PlayClipAtPoint(soundEffect, transform.position);
+    }
+
+
+    private IEnumerator SendPlayerToPoint()
+    {
+        MainUI.Instance.ScreenFade(true);
+
+        while (!MainUI.Instance.screenIsBlack)
+            yield return null;
+
+        Camera.main.gameObject.transform.position = lookPoint.transform.position;
+
+        MainUI.Instance.ScreenFade(false);
+
     }
 
 

@@ -50,7 +50,8 @@
 			fixed4 frag(v2f i) : SV_TARGET{
                 float2 textureCoordinate = i.screenPosition.xy / i.screenPosition.w;
                 float aspect = _ScreenParams.x / _ScreenParams.y;
-                textureCoordinate.x = textureCoordinate.x * aspect;
+                textureCoordinate.x = textureCoordinate.x * aspect + _Time*2;
+                textureCoordinate.y = textureCoordinate.y + _Time*2;
                 textureCoordinate = TRANSFORM_TEX(textureCoordinate, _MainTex);
 				fixed4 col = tex2D(_MainTex, textureCoordinate);
 				col *= _Color;
