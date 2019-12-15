@@ -84,6 +84,7 @@ public class SurveyPanel : MonoBehaviour
         questions.Add(new Question("Have you cleaned off your desk lately?", true, "LightsOnCompletion"));
         questions.Add(new Question("Open the folder on your desk.", false, "OpenFolderCompletion"));
         questions.Add(new Question("Do you recognize the contents of the folder?", true));
+        questions.Add(new Question("Throw away the contents of the folder.", false, "ThrowAwayImageCompletion"));
         questions.Add(new Question("Do you have internet access?", true));
         questions.Add(new Question("Do you have any enemies?", true));
         questions.Add(new Question("If you suddenly went missing, would anybody come looking for you?", true));
@@ -105,9 +106,9 @@ public class SurveyPanel : MonoBehaviour
         questions.Add(new Question("Look out your window.", false, "WindowCompletion"));
         
         questions.Add(new Question("Look around you. This room. The door. The computer. The house next door...", false, "WaitCompletion"));
-        questions.Add(new Question("None of it is real. I made you. I made this world.", false, "WaitCompletion"));
+        questions.Add(new Question("None of it is real. I made this world. I made you.", false, "WaitCompletion"));
         questions.Add(new Question("I’ve been trying to help you see it for what it is, and now I’ve finally done it.", false, "WaitCompletion"));
-        questions.Add(new Question("I can finally set you free.", false, "WaitCompletion"));
+        questions.Add(new Question("I can finally set you free...", false, "WaitCompletion"));
         questions.Add(new Question("", false));
 
         GoToNextQuestion();
@@ -122,22 +123,27 @@ public class SurveyPanel : MonoBehaviour
         if (questions[currentQuestion].text.Length > 0)
             questionText.text =  questions[currentQuestion].text.Substring(0, currentChar);
 
-        if (currentQuestion > 36)
+        if (currentQuestion > 37)
             MainUI.Instance.SetDialogText(questionText.text);
         
     }
 
 
-    void OnClickYes()
+    public void OnClickYes()
     {
         OnClickBase();
 
     }
 
 
-    void OnClickNo()
+    public void OnClickNo()
     {
         OnClickBase();
+
+        if (currentQuestion == 1)
+        {
+            Destroy(this.gameObject, 0.1f);
+        }
 
     }
 
@@ -145,7 +151,7 @@ public class SurveyPanel : MonoBehaviour
     /// <summary>
     /// The basic button click functionality
     /// </summary>
-    void OnClickBase()
+    public void OnClickBase()
     {
         Debug.Log("Base button clicked!");
         eitherButtonClicked = true;
@@ -329,7 +335,21 @@ public class SurveyPanel : MonoBehaviour
 
         folderInteractable.canInteract = true;
 
-        while (!folder)
+        while (!folder.isOpen)
+            yield return null;
+
+        GoToNextQuestion();
+
+    }
+
+
+    IEnumerator ThrowAwayImageCompletion()
+    {
+
+        while (currentChar < questions[currentQuestion].text.Length)
+            yield return null;
+
+        while (folder.hasImage)
             yield return null;
 
         GoToNextQuestion();
@@ -339,7 +359,7 @@ public class SurveyPanel : MonoBehaviour
 
     IEnumerator ShadowSeenCompletion()
     {
-
+        
         Vector3 dir = transform.position - player.transform.position;
         float angle = 0;
 
@@ -406,8 +426,8 @@ public class SurveyPanel : MonoBehaviour
         while (Time.time < time + 20f)
         {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(vel * Time.deltaTime, 0f, 0f);
-            vel += 0.2f;
-            yield return new WaitForEndOfFrame();
+            vel += 40f * Time.deltaTime;
+            yield return null;
         }
 
         MainUI.Instance.ScreenFade(true);

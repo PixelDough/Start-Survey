@@ -26,6 +26,8 @@ public class Interactable : MonoBehaviour
     [SerializeField] string name = "NAME";
     [SerializeField] Transform lookPoint;
 
+    [HideInInspector] public bool isHoveredOver = false;
+
     private string action = "Use";
 
     enum InteractionTypes
@@ -102,6 +104,7 @@ public class Interactable : MonoBehaviour
     private void LateUpdate()
     {
         if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
+
         if (isHeld)
         {
             transform.SetParent(holdPoint.transform);
@@ -110,10 +113,11 @@ public class Interactable : MonoBehaviour
             if (rb) rb.isKinematic = true;
             collider.enabled = false;
             //DrawOutlineMesh();
-            heldRotation += Input.mouseScrollDelta.y * 2000 * Time.deltaTime;
+            heldRotation += Input.mouseScrollDelta.y * 2000f * Time.deltaTime;
 
             
         }
+
         else if (interactionType != InteractionTypes.Pickup)
         {
             
@@ -132,19 +136,19 @@ public class Interactable : MonoBehaviour
     }
 
 
-    private void OnMouseEnter()
-    {
-        if (!this.enabled) { return; }
-        if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
-        if ((holdPoint.currentHeldItem != null && interactionType == InteractionTypes.Pickup)) { return; }
-        if (!holdPoint.currentHeldItem && interactionType == InteractionTypes.Trash) { return; }
+    //private void OnMouseEnter()
+    //{
+    //    if (!this.enabled) { return; }
+    //    if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
+    //    if ((holdPoint.currentHeldItem != null && interactionType == InteractionTypes.Pickup)) { return; }
+    //    if (!holdPoint.currentHeldItem && interactionType == InteractionTypes.Trash) { return; }
 
-        MainUI.Instance.SetInteractText(action, name);
-        MainUI.Instance.SetInteractVisible(true);
-    }
+    //    MainUI.Instance.SetInteractText(action, name);
+    //    MainUI.Instance.SetInteractVisible(true);
+    //}
 
 
-    private void OnMouseOver()
+    public void HoverLook()
     {
         if (!this.enabled) { return; }
         if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
@@ -153,10 +157,12 @@ public class Interactable : MonoBehaviour
 
         MainUI.Instance.SetInteractText(action, name);
         MainUI.Instance.SetInteractVisible(true);
+
+        
     }
 
 
-    private void OnMouseExit()
+    public void ExitLook()
     {
         if (!this.enabled) { return; }
         if (!GameManager.Instance.surveyStarted || !canInteract) { return; }
@@ -167,7 +173,7 @@ public class Interactable : MonoBehaviour
     }
 
 
-    private void OnMouseDown()
+    public void Clicked()
     {
         if (!this.enabled) { return; }
         if (!GameManager.Instance.surveyStarted || !canInteract) { return; }

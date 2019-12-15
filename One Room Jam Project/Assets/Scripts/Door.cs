@@ -19,7 +19,7 @@ public class Door : MonoBehaviour
         audioSource = GetComponentInChildren<AudioSource>();
         renderer = GetComponentInChildren<Renderer>();
         hideWhenSeen = FindObjectsOfType<HideWhenSeen>();
-        ToggleHiddenGuys();
+        //ToggleHiddenGuys();
     }
 
 

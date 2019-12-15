@@ -48,6 +48,7 @@ public class SmoothMouseLook : MonoBehaviour
     {
         if (!hasFocus || Cursor.lockState != CursorLockMode.Locked) return;
 
+
         float zoomSpeedMultiplier = 1f;
         if (isZoomedIn) zoomSpeedMultiplier = .5f;
 

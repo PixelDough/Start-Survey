@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Language LANG="english" ID="0">
+  <!-- UI -->
+  <text key="PICK_UP">Pick Up</text>
+  <text key="PRESS">Press</text>
+  <text key="TRASH">Trash</text>
+  <text key="OPEN">Open</text>
+  <text key="TOGGLE">Toggle</text>
+  <text key="LOOK">Look</text>
+
+  <!-- LAPTOP -->
+  <text key="YES">Yes</text>
+  <text key="NO">No</text>
+  
+  <!-- QUESTIONS -->
+  
+</Language>

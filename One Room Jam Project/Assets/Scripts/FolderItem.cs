@@ -13,10 +13,21 @@ public class FolderItem : MonoBehaviour
 
     [HideInInspector] public bool isOpen = false;
 
+    [HideInInspector] public bool hasImage = true;
+
 
     private void Start()
     {
         StartCoroutine(StartItemLoad());
+    }
+
+
+    private void Update()
+    {
+        if (image != null)
+        {
+            hasImage = false;
+        }
     }
 
 
